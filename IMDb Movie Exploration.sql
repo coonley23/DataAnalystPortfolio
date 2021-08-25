@@ -74,19 +74,18 @@ ORDER BY startyear, averagerating DESC;
 
 --Steven Spielberg's top 10 highest rated movies
 
-SELECT nconst, primaryname
-FROM name_basics
-WHERE primaryname = 'Steven Spielberg';
-
-----nconst for Steven Spielberg = nm0000229
-
 SELECT tb.primarytitle, tb.startyear, tb.genres, tr.averagerating
 FROM title_basics tb
 JOIN title_crew tc
 ON tb.tconst = tc.tconst
 JOIN title_ratings tr
 ON tb.tconst = tr.tconst
-WHERE tc.directors = 'nm0000229'
+WHERE tc.directors =
+	(
+	SELECT nconst
+	FROM name_basics
+	WHERE primaryname = 'Steven Spielberg'
+	)
 AND tb.titletype = 'movie'
 ORDER BY tr.averagerating DESC
 LIMIT 10;
@@ -137,12 +136,6 @@ WHERE te.seasonnumber =
 	
 --Ranking Christoper Nolan's movies.
 
-SELECT nconst, primaryname
-FROM name_basics
-WHERE primaryname LIKE 'Chris%Nolan%';
-
-----nconst for Christopher Nolan = 'nm0634240'
-
 SELECT tb.primarytitle, tb.startyear, tr.averagerating,
 RANK() OVER(ORDER BY tr.averagerating DESC) movierank,
 CASE (RANK() OVER(ORDER BY tr.averagerating DESC))
@@ -154,7 +147,12 @@ JOIN title_crew tc
 ON tb.tconst = tc.tconst
 JOIN title_ratings tr
 ON tb.tconst = tr.tconst
-WHERE tc.directors = 'nm0634240';
+WHERE tc.directors =
+	(
+	SELECT nconst
+	FROM name_basics
+	WHERE primaryname LIKE 'Christopher%Nolan%'
+	);
 
 --Rating of TV Show 'The Office'
 
